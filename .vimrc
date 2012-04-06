@@ -62,3 +62,12 @@ Bundle 'git://git.wincent.com/command-t.git'
 "" Key Remaps
 ""
 nnoremap t <C-]>
+
+
+""
+"" Cursor Remaps
+""
+" HIGHLIGHT ACTIVE LINE AND COLUMN
+au WinLeave * set nocursorline nocursorcolumn
+au WinEnter * set cursorline cursorcolumn
+set cursorline cursorcolumn

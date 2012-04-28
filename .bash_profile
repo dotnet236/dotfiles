@@ -1,5 +1,5 @@
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM 
-set $EDITOR=vim
+set EDITOR=vim
 
 export DOTBASH=~/.git_bash
 source $DOTBASH/main.sh

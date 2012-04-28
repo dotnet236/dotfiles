@@ -52,22 +52,44 @@ Bundle 'tComment'
 Bundle 'scrooloose/nerdtree'
 Bundle 'majutsushi/tagbar.git'
 Bundle 'godlygeek/tabular.git'
-Bundle 'lokaltog/vim-easymotion'
 Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
-Bundle 'l9'
-Bundle 'fuzzyfinder'
+Bundle 'L9'
+Bundle 'FuzzyFinder'
 Bundle 'git://git.wincent.com/command-t.git'
+Bundle 'camelcasemotion'
 
 ""
 "" Key Remaps
 ""
 nnoremap t <C-]>
 
+" Clear pattern match with space
+:nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
 
 ""
 "" Cursor Remaps
 ""
 " HIGHLIGHT ACTIVE LINE AND COLUMN
-au WinLeave * set nocursorline nocursorcolumn
-au WinEnter * set cursorline cursorcolumn
+hi CursorLine cterm=NONE ctermbg=White ctermfg=Black guibg=White guifg=Black
+hi CursorColumn cterm=NONE ctermbg=White ctermfg=Black guibg=White guifg=Black
+nnoremap <Leader>c :set cursorline! cursorcolumn!<CR>
 set cursorline cursorcolumn
+
+""
+"" On File Load Events
+""
+" Higlight Matching Parens
+au VimEnter * DoMatchParen
+
+" Change current working directory when a file is opended
+set autochdir
+
+""
+"" Movement remaps
+""
+map w <Plug>CamelCaseMotion_w
+map b <Plug>CamelCaseMotion_b
+map e <Plug>CamelCaseMotion_e
+sunmap w
+sunmap b
+sunmap e

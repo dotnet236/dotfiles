@@ -1,0 +1,63 @@
+windows:
+  - name: "auth-platform"
+    root: "~/Projects/Galileo/auth-platform/auth-platform-webapp"
+    filters:
+    splits:
+      - cmd:
+          - "sleep .1"
+          - "clear"
+        height: 10
+      - cmd:
+          - "sleep .1"
+          - "clear"
+          - "tmux select-pane -t 1"
+        height: 90
+
+  - name: "auth-devportal"
+    root: "~/Projects/Galileo/auth-devportal/auth-devportal-webapp"
+    filters:
+      after:
+    splits:
+      - cmd:
+          - "tmux swap-window -s 2 -t 1"
+          - "sleep .1"
+          - "clear"
+        height: 10
+      - cmd:
+          - "sleep .1"
+          - "clear"
+          - "tmux select-pane -t 1"
+        height: 90
+  - name: "auth-editors"
+    root: "~/Projects/Galileo/auth-editors"
+    filters:
+      after:
+    splits:
+      - cmd:
+          - "tmux swap-window -s 3 -t 2"
+          - "tmux kill-window -t 3"
+          - "sleep .1"
+          - "clear"
+        height: 10
+      - cmd:
+          - "sleep .1"
+          - "clear"
+          - "tmux select-pane -t 1"
+        height: 90
+
+  - name: "simplecard"
+    root: "~/Projects/Galileo/simplecard/simplecard-webapp"
+    filters:
+      after:
+    splits:
+      - cmd:
+          - "tmux swap-window -s 3 -t 2"
+          - "tmux kill-window -t 3"
+          - "sleep .1"
+          - "clear"
+        height: 10
+      - cmd:
+          - "sleep .1"
+          - "clear"
+          - "tmux select-pane -t 1"
+        height: 90

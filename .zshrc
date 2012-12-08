@@ -55,5 +55,7 @@ export PATH="$HOME/.rbenv/bin:$PATH"
 foreground-vi() {
   fg %vi
 }
+
 zle -N foreground-vi
 bindkey '^Z' foreground-vi
+

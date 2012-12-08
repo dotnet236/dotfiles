@@ -53,7 +53,6 @@ Bundle 'majutsushi/tagbar.git'
 Bundle 'godlygeek/tabular.git'
 Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
 Bundle 'L9'
-Bundle 'FuzzyFinder'
 Bundle 'git://git.wincent.com/command-t.git'
 Bundle 'camelcasemotion'
 Bundle 'ShowMarks'
@@ -66,13 +65,24 @@ set wildignore+="**/.jhw-cache/**"
 
 
 "" =============================
+"" Mouse Features
+"" =============================
+set mouse=nv
+
+
+"" =============================
 "" Key Remaps
 "" =============================
-" 
+
+" Zoom In/Out
 nnoremap t <C-]>
 map + <c-w>+
 map - <c-w>-
 map <c-l> 10<c-w>>
+
+" Pane Movement
+map <c-w>u <c-w>t<c-w>K
+map <c-w>d <c-w>t<c-w>H
 
 "" Move Between Words Using Camel Case
 map w <Plug>CamelCaseMotion_w
@@ -83,14 +93,16 @@ sunmap b
 sunmap e
 
 "" Copy/Paste
-map <Leader>jf  <Esc>:%!json_xs -f json -t json-pretty<CR>
-nmap <c-v> :set paste<CR>:r !pbpaste<CR>:set nopaste<CR>
-imap <c-v> <Esc>:set paste<CR>:r !pbpaste<CR>:set nopaste<CR>
-nmap <c-c> :.w !pbcopy<CR><CR>
-vmap <c-c> :w !pbcopy<CR><CR>
+nmap <c-p> :set paste<CR>:r !pbpaste<CR>:set nopaste<CR><Esc>
+imap <c-p> <Esc>:set paste<CR>:r !pbpaste<CR>:set nopaste<CR><Esc>
+nmap <c-y> :.w !pbcopy<CR><CR>
+vmap <c-y> :w !pbcopy<CR><CR>
 
 "" Clear pattern match with space
 :nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
+
+" JSON Formatter
+map <Leader>jf  <Esc>:%!json_xs -f json -t json-pretty<CR>
 
 "" Spell Checking
 nmap <silent> s :set spell!<CR>
@@ -100,7 +112,10 @@ nmap <c-a> :call ToggleBetweenTest()<CR>
 
 "" Run RSpec
 map <c-o> :call RunCurrentTest()<CR>
-map <c-s> :call RunCurrentLineInTest()<CR>
+map <c-i> :call RunCurrentLineInTest()<CR>
+
+"" Git
+nmap <Leader>o :only!<CR>:diffoff<CR>
 
 
 "" ============================

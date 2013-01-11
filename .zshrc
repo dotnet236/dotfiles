@@ -49,6 +49,7 @@ alias sdk="cd ~/Projects/Galileo/galileo-sdk"
 alias reload="source ~/.bash_profile"
 alias todo="vim ~/Notes/todo"
 alias note="vim ~/Notes/current_notes"
+alias b="popd"
 export PATH="$HOME/.rbenv/bin:$PATH"
 
 
@@ -58,4 +59,3 @@ foreground-vi() {
 
 zle -N foreground-vi
 bindkey '^Z' foreground-vi
-

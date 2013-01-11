@@ -99,8 +99,8 @@ nmap <silent> s :set spell!<CR>
 nmap <c-a> :call ToggleBetweenTest()<CR>
 
 "" Run RSpec
-map <c-o> :call RunCurrentTest()<CR>
-map <c-i> :call RunCurrentLineInTest()<CR>
+map <c-o> :call RunCurrentSpecFile()<CR>
+map <c-i> :call RunNearestSpec()<CR>
 
 "" Git
 nmap <Leader>o :only!<CR>:diffoff<CR>
@@ -114,6 +114,7 @@ map <c-h> :bn<CR>
 map <c-l> :bp<CR>
 
 "" =============================
+
 "" File Exclusions
 "" =============================
 set wildignore+="**/.jhw-cache/**"
@@ -179,54 +180,43 @@ endfunction
 "" ============================
 "" Rspec w/zeus - Thanks B. Orenstein
 "" ============================
-function! RunCurrentTest()
-  let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\|_test.rb\)$') != -1
-  if in_test_file
-    call SetTestFile()
-
-    if match(expand('%'), '\.feature$') != -1
-      call SetTestRunner("!cucumber")
-      exec g:bjo_test_runner g:bjo_test_file
-    elseif match(expand('%'), '_spec\.rb$') != -1
-      call SetTestRunner("!zeus rspec")
-      exec g:bjo_test_runner g:bjo_test_file
-    else
-      call SetTestRunner("!ruby -Itest")
-      exec g:bjo_test_runner g:bjo_test_file
-    endif
-  else
-    exec g:bjo_test_runner g:bjo_test_file
+function! RunCurrentSpecFile()
+  if InSpecFile()
+    let l:command = "s " . @% . " -f documentation"
+    call SetLastSpecCommand(l:command)
+    call RunSpecs(l:command)
   endif
 endfunction
 
-function! SetTestRunner(runner)
-  let g:bjo_test_runner=a:runner
-endfunction
-
-function! RunCurrentLineInTest()
-  let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\|_test.rb\)$') != -1
-  if in_test_file
-    call SetTestFileWithLine()
-    exec "!zeus rspec" g:bjo_test_file . ":" . g:bjo_test_file_line
-  end
-
-endfunction
-
-function! SetTestFile()
-  let g:bjo_test_file=@%
-endfunction
-
-function! SetTestFileWithLine()
-  let g:bjo_test_file=@%
-  let g:bjo_test_file_line=line(".")
-endfunction
-
-function! CorrectTestRunner()
-  if match(expand('%'), '\.feature$') != -1
-    return "cucumber"
-  elseif match(expand('%'), '_spec\.rb$') != -1
-    return "rspec"
-  else
-    return "ruby"
+function! RunNearestSpec()
+  if InSpecFile()
+    let l:command = "s " . @% . " -l " . line(".") . " -f documentation"
+    call SetLastSpecCommand(l:command)
+    call RunSpecs(l:command)
   endif
 endfunction
+
+function! RunLastSpec()
+  if exists("t:last_spec_command")
+    call RunSpecs(t:last_spec_command)
+  endif
+endfunction
+
+function! InSpecFile()
+  return match(expand("%"), "_spec.rb$") != -1
+endfunction
+
+function! SetLastSpecCommand(command)
+  let t:last_spec_command = a:command
+endfunction
+
+function! RunSpecs(command)
+  execute ":w\|!clear && echo " . a:command . " && echo && " . a:command
+endfunction
+
+
+"" ============================
+"" .vimrc
+"" ============================
+"" Reload .vimrc when saved
+autocmd BufWritePost .vimrc source %

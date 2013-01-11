@@ -209,6 +209,7 @@ endfunction
 function! SetLastSpecCommand(command)
   let t:last_spec_command = a:command
 endfunction
+ 
 
 function! RunSpecs(command)
   execute ":w\|!clear && echo " . a:command . " && echo && " . a:command

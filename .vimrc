@@ -59,18 +59,6 @@ Bundle 'ShowMarks'
 
 
 "" =============================
-"" File Exclusions
-"" =============================
-set wildignore+="**/.jhw-cache/**"
-
-
-"" =============================
-"" Mouse Features
-"" =============================
-set mouse=nv
-
-
-"" =============================
 "" Key Remaps
 "" =============================
 
@@ -116,6 +104,38 @@ map <c-i> :call RunCurrentLineInTest()<CR>
 
 "" Git
 nmap <Leader>o :only!<CR>:diffoff<CR>
+nmap <Leader>g :Gstatus<CR>
+
+"" View KeyMaps
+map <c-m> :e ~/.vimrc<CR>:115<CR><ESC>
+
+"" Navigate Buffers
+map <c-h> :bn<CR>
+map <c-l> :bp<CR>
+
+"" =============================
+"" File Exclusions
+"" =============================
+set wildignore+="**/.jhw-cache/**"
+
+"" ============================
+"" Swap File
+"" ============================
+set noswapfile
+
+"" =============================
+"" Mouse Features
+"" =============================
+set mouse=nv
+
+
+"" ============================
+"" Code Folding
+"" ============================
+set foldmethod=indent   "fold based on indent
+set foldnestmax=10      "deepest fold is 10 levels
+set nofoldenable        "dont fold by default
+set foldlevel=1         "this is just what i use
 
 
 "" ============================
@@ -157,7 +177,7 @@ endfunction
 
 
 "" ============================
-"" Rspec - Thanks B. Orenstein
+"" Rspec w/zeus - Thanks B. Orenstein
 "" ============================
 function! RunCurrentTest()
   let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\|_test.rb\)$') != -1
@@ -168,7 +188,7 @@ function! RunCurrentTest()
       call SetTestRunner("!cucumber")
       exec g:bjo_test_runner g:bjo_test_file
     elseif match(expand('%'), '_spec\.rb$') != -1
-      call SetTestRunner("!rspec")
+      call SetTestRunner("!zeus rspec")
       exec g:bjo_test_runner g:bjo_test_file
     else
       call SetTestRunner("!ruby -Itest")
@@ -187,9 +207,9 @@ function! RunCurrentLineInTest()
   let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\|_test.rb\)$') != -1
   if in_test_file
     call SetTestFileWithLine()
+    exec "!zeus rspec" g:bjo_test_file . ":" . g:bjo_test_file_line
   end
 
-  exec "!rspec" g:bjo_test_file . ":" . g:bjo_test_file_line
 endfunction
 
 function! SetTestFile()

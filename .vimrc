@@ -56,21 +56,57 @@ Bundle 'L9'
 Bundle 'git://git.wincent.com/command-t.git'
 Bundle 'camelcasemotion'
 Bundle 'ShowMarks'
+Bundle 'https://github.com/Bogdanp/rbrepl.vim'
+Bundle 'https://github.com/itspriddle/vim-marked.git'
 
 
 "" =============================
 "" Key Remaps
 "" =============================
 
-" Zoom In/Out
-nnoremap t <C-]>
-map + <c-w>+
-map - <c-w>-
-map <c-l> 10<c-w>>
-
 " Pane Movement
 map <c-w>u <c-w>t<c-w>K
 map <c-w>d <c-w>t<c-w>H
+
+"" Copy/Paste
+nmap <c-p> :set paste<CR>:r !pbpaste<CR>:set nopaste<CR><Esc>
+imap <c-p> <Esc>:set paste<CR>:r !pbpaste<CR>:set nopaste<CR><Esc>
+nmap <c-y> :.w !pbcopy<CR><CR>
+vmap <c-y> :w !pbcopy<CR><CR>
+
+"" Run RSpec
+map <c-o> :call RunCurrentTest()<CR>
+map <c-i> :call RunCurrentLineInTest()<CR>
+
+"" Navigate Buffers
+map <c-h> :bn<CR>
+map <c-l> :bp<CR>
+
+"" Edit 'general' scratch pad
+map <c-n> :e ~/Notes/current_notes<CR><ESC>
+
+"" Maximize split
+nmap <c-b> :call ZoomWin()<CR><ESC>
+"" Clear pattern match with space
+
+"" View KeyMaps
+map <c-m> :e ~/.vimrc<CR>:115<CR><ESC>
+
+"" Toggle To/From Test
+nmap <c-a> :call ToggleBetweenTest()<CR>
+
+"" Git
+nmap <Leader>o :only!<CR>:diffoff<CR>
+nmap <Leader>g :Gstatus<CR>
+
+" JSON Formatter
+map <Leader>jf  <Esc>:%!json_xs -f json -t json-pretty<CR>
+
+"" Disable selection highlighting
+:nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
+
+"" Spell Checking
+nmap <silent> s :set spell!<CR>
 
 "" Move Between Words Using Camel Case
 map w <Plug>CamelCaseMotion_w
@@ -80,38 +116,10 @@ sunmap w
 sunmap b
 sunmap e
 
-"" Copy/Paste
-nmap <c-p> :set paste<CR>:r !pbpaste<CR>:set nopaste<CR><Esc>
-imap <c-p> <Esc>:set paste<CR>:r !pbpaste<CR>:set nopaste<CR><Esc>
-nmap <c-y> :.w !pbcopy<CR><CR>
-vmap <c-y> :w !pbcopy<CR><CR>
+"" Always force save
+"" :command W :w!
 
-"" Clear pattern match with space
-:nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
 
-" JSON Formatter
-map <Leader>jf  <Esc>:%!json_xs -f json -t json-pretty<CR>
-
-"" Spell Checking
-nmap <silent> s :set spell!<CR>
-
-"" Toggle To/From Test
-nmap <c-a> :call ToggleBetweenTest()<CR>
-
-"" Run RSpec
-map <c-o> :call RunCurrentTest()<CR>
-map <c-i> :call RunCurrentLineInTest()<CR>
-
-"" Git
-nmap <Leader>o :only!<CR>:diffoff<CR>
-nmap <Leader>g :Gstatus<CR>
-
-"" View KeyMaps
-map <c-m> :e ~/.vimrc<CR>:115<CR><ESC>
-
-"" Navigate Buffers
-map <c-h> :bn<CR>
-map <c-l> :bp<CR>
 
 "" =============================
 "" File Exclusions
@@ -142,8 +150,8 @@ set foldlevel=1         "this is just what i use
 "" Cursor Remaps
 "" ============================
 "" HIGHLIGHT ACTIVE LINE AND COLUMN
-hi CursorLine cterm=NONE ctermbg=White ctermfg=Black guibg=White guifg=Black
 hi CursorColumn cterm=NONE ctermbg=White ctermfg=Black guibg=White guifg=Black
+hi CursorLine cterm=NONE ctermbg=White ctermfg=Black guibg=White guifg=Black
 nnoremap <Leader>c :set cursorline! cursorcolumn!<CR>
 set cursorline cursorcolumn
 
@@ -180,16 +188,18 @@ endfunction
 "" Rspec w/zeus - Thanks B. Orenstein
 "" ============================
 function! RunCurrentTest()
-  let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\|_test.rb\)$') != -1
-  if in_test_file
+  let g:spec_directory = expand('%:p:h')
+  let g:in_test_file = match(expand("%"), '\(.feature\|_spec.rb\|_test.rb\)$') != -1
+  if g:in_test_file
     call SetTestFile()
-
     if match(expand('%'), '\.feature$') != -1
       call SetTestRunner("!cucumber")
       exec g:bjo_test_runner g:bjo_test_file
     elseif match(expand('%'), '_spec\.rb$') != -1
+      call ChangeDirectory(b:rails_root)
       call SetTestRunner("!zeus rspec")
       exec g:bjo_test_runner g:bjo_test_file
+      call ChangeDirectory(g:spec_directory)
     else
       call SetTestRunner("!ruby -Itest")
       exec g:bjo_test_runner g:bjo_test_file
@@ -204,20 +214,22 @@ function! SetTestRunner(runner)
 endfunction
 
 function! RunCurrentLineInTest()
-  let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\|_test.rb\)$') != -1
-  if in_test_file
+  let g:spec_directory = expand('%:p:h')
+  let g:in_test_file = match(expand("%"), '\(.feature\|_spec.rb\|_test.rb\)$') != -1
+  if g:in_test_file
     call SetTestFileWithLine()
+    call ChangeDirectory(b:rails_root)
     exec "!zeus rspec" g:bjo_test_file . ":" . g:bjo_test_file_line
+    call ChangeDirectory(g:spec_directory)
   end
-
 endfunction
 
 function! SetTestFile()
-  let g:bjo_test_file=@%
+  let g:bjo_test_file=expand('%:p')
 endfunction
 
 function! SetTestFileWithLine()
-  let g:bjo_test_file=@%
+  let g:bjo_test_file=expand('%:p')
   let g:bjo_test_file_line=line(".")
 endfunction
 
@@ -231,9 +243,12 @@ function! CorrectTestRunner()
   endif
 endfunction
 
+function! ChangeDirectory(directory)
+  exec "cd " . a:directory
+endfunction
 
 "" ============================
 "" .vimrc
 "" ============================
 "" Reload .vimrc when saved
-autocmd BufWritePost .vimrc source %
+"" autocmd  BufWritePost .vimrc source %

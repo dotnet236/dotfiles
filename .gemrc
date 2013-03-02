@@ -1,0 +1,10 @@
+---
+:backtrace: false
+:benchmark: false
+:bulk_threshold: 1000
+:sources:
+- http://rubygems.org/
+- http://username:password@p2-qahud104.ad.prodcc.net/upload
+- http://p2-qahud104.ad.prodcc.net/
+:update_sources: true
+:verbose: true

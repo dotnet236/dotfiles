@@ -50,8 +50,8 @@ Bundle 'kchmck/vim-coffee-script.git'
 Bundle 'tComment'
 Bundle 'scrooloose/nerdtree'
 Bundle 'majutsushi/tagbar.git'
-Bundle 'godlygeek/tabular.git'
 Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
+Bundle 'godlygeek/tabular.git'
 Bundle 'L9'
 Bundle 'git://git.wincent.com/command-t.git'
 Bundle 'camelcasemotion'
@@ -116,6 +116,13 @@ sunmap w
 sunmap b
 sunmap e
 
+"" Nerd Tree
+nmap <Leader>d :NERDTree<CR><ESC>
+
+"" Preview Markdown File
+map <Leader>m :MarkedOpen<CR><ESC>
+
+
 "" Always force save
 "" :command W :w!
 
@@ -144,6 +151,13 @@ set foldmethod=indent   "fold based on indent
 set foldnestmax=10      "deepest fold is 10 levels
 set nofoldenable        "dont fold by default
 set foldlevel=1         "this is just what i use
+
+
+"" ============================
+"" CoffeeScript
+"" ============================
+let coffee_compiler = '/usr/local/share/npm/bin/coffee'
+let coffee_compile_vert = 1
 
 
 "" ============================
@@ -190,22 +204,13 @@ endfunction
 function! RunCurrentTest()
   let g:spec_directory = expand('%:p:h')
   let g:in_test_file = match(expand("%"), '\(.feature\|_spec.rb\|_test.rb\)$') != -1
+
   if g:in_test_file
     call SetTestFile()
-    if match(expand('%'), '\.feature$') != -1
-      call SetTestRunner("!cucumber")
-      exec g:bjo_test_runner g:bjo_test_file
-    elseif match(expand('%'), '_spec\.rb$') != -1
-      call ChangeDirectory(b:rails_root)
-      call SetTestRunner("!zeus rspec")
-      exec g:bjo_test_runner g:bjo_test_file
-      call ChangeDirectory(g:spec_directory)
-    else
-      call SetTestRunner("!ruby -Itest")
-      exec g:bjo_test_runner g:bjo_test_file
-    endif
-  else
+    call ChangeDirectory(b:rails_root)
+    call SetTestRunner("!zeus rspec")
     exec g:bjo_test_runner g:bjo_test_file
+    call ChangeDirectory(g:spec_directory)
   endif
 endfunction
 

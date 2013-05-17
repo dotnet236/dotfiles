@@ -50,7 +50,9 @@ alias reload="source ~/.bash_profile"
 alias todo="vim ~/Notes/todo"
 alias note="vim ~/Notes/current_notes"
 alias b="popd"
-export PATH="$HOME/.rbenv/bin:$PATH"
+alias hh="cd ~/Projects/humboldts_happiness"
+alias projects="cd ~/Projects"
+export PATH="$PATH:/usr/local/share/npm/bin"
 
 
 foreground-vi() {
@@ -59,3 +61,16 @@ foreground-vi() {
 
 zle -N foreground-vi
 bindkey '^Z' foreground-vi
+
+imv() {
+  local src dst
+  for src; do
+    [[ -e $src ]] || { print -u2 "$src does not exist"; continue }
+    dst=$src
+    vared dst
+    [[ $src != $dst ]] && mkdir -p $dst:h && mv -n $src $dst
+  done
+}
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"

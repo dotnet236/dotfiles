@@ -34,30 +34,22 @@ filetype plugin indent on
 
 "" Vundle Bundles
 Bundle 'gmarik/vundle'
-Bundle 'greplace.vim'
 Bundle 'tpope/vim-rails.git'
-Bundle 'tpope/vim-cucumber.git'
-Bundle 'tpope/vim-bundler.git'
 Bundle 'tpope/vim-git.git'
-Bundle 'tpope/vim-endwise.git'
 Bundle 'tpope/vim-rake.git'
-Bundle 'tpope/vim-surround.git'
 Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-unimpaired.git'
 Bundle 'altercation/vim-colors-solarized.git'
 Bundle 'othree/html5.vim.git'
 Bundle 'kchmck/vim-coffee-script.git'
 Bundle 'tComment'
 Bundle 'scrooloose/nerdtree'
-Bundle 'majutsushi/tagbar.git'
-Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
 Bundle 'godlygeek/tabular.git'
-Bundle 'L9'
 Bundle 'git://git.wincent.com/command-t.git'
 Bundle 'camelcasemotion'
-Bundle 'ShowMarks'
-Bundle 'https://github.com/Bogdanp/rbrepl.vim'
 Bundle 'https://github.com/itspriddle/vim-marked.git'
+Bundle 'https://github.com/airblade/vim-gitgutter.git'
+Bundle 'https://github.com/epmatsw/ag.vim.git'
+Bundle 'https://github.com/jceb/vim-orgmode.git'
 
 
 "" =============================
@@ -122,6 +114,8 @@ nmap <Leader>d :NERDTree<CR><ESC>
 "" Preview Markdown File
 map <Leader>m :MarkedOpen<CR><ESC>
 
+nnoremap <S-f> :Ag!
+
 
 "" Always force save
 "" :command W :w!
@@ -159,6 +153,9 @@ set foldlevel=1         "this is just what i use
 let coffee_compiler = '/usr/local/share/npm/bin/coffee'
 let coffee_compile_vert = 1
 
+
+"" Powerline
+"" let g:Powerline_symbols='Fancy'
 
 "" ============================
 "" Cursor Remaps
@@ -208,7 +205,7 @@ function! RunCurrentTest()
   if g:in_test_file
     call SetTestFile()
     call ChangeDirectory(b:rails_root)
-    call SetTestRunner("!zeus rspec")
+    call SetTestRunner("!zeus rspec doc")
     exec g:bjo_test_runner g:bjo_test_file
     call ChangeDirectory(g:spec_directory)
   endif
@@ -224,7 +221,9 @@ function! RunCurrentLineInTest()
   if g:in_test_file
     call SetTestFileWithLine()
     call ChangeDirectory(b:rails_root)
-    exec "!zeus rspec" g:bjo_test_file . ":" . g:bjo_test_file_line
+    let g:cmd = "!zeus rspec " . g:bjo_test_file . ":" . g:bjo_test_file_line
+    echo g:cmd
+    exec g:cmd
     call ChangeDirectory(g:spec_directory)
   end
 endfunction
@@ -236,16 +235,6 @@ endfunction
 function! SetTestFileWithLine()
   let g:bjo_test_file=expand('%:p')
   let g:bjo_test_file_line=line(".")
-endfunction
-
-function! CorrectTestRunner()
-  if match(expand('%'), '\.feature$') != -1
-    return "cucumber"
-  elseif match(expand('%'), '_spec\.rb$') != -1
-    return "rspec"
-  else
-    return "ruby"
-  endif
 endfunction
 
 function! ChangeDirectory(directory)

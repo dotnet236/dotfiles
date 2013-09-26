@@ -15,9 +15,6 @@
   lc = log ORIG_HEAD.. --stat --no-merges
   prune-all = !git remote | xargs -n 1 git remote prune
   news = log -p HEAD@{1}..HEAD@{0}
-[github]
-	user = dotnet236
-	password = Vitec4IT
 [color]
 	ui = true
 [core]

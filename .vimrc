@@ -50,6 +50,8 @@ Bundle 'https://github.com/itspriddle/vim-marked.git'
 Bundle 'https://github.com/airblade/vim-gitgutter.git'
 Bundle 'https://github.com/epmatsw/ag.vim.git'
 Bundle 'https://github.com/jceb/vim-orgmode.git'
+Bundle 'christoomey/vim-tmux-navigator'
+Bundle 'YouCompleteMe'
 
 
 "" =============================
@@ -92,7 +94,8 @@ nmap <Leader>o :only!<CR>:diffoff<CR>
 nmap <Leader>g :Gstatus<CR>
 
 " JSON Formatter
-map <Leader>jf  <Esc>:%!json_xs -f json -t json-pretty<CR>
+map <Leader>jf :!python -m json.tool<CR>
+""<Esc>:%!json_xs -f json -t json-pretty<CR>
 
 "" Disable selection highlighting
 :nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
@@ -110,17 +113,30 @@ sunmap e
 
 "" Nerd Tree
 nmap <Leader>d :NERDTree<CR><ESC>
+  - "app/**/*.{js,coffee}"
+  - "app/assets/javascripts/test.js.coffee"
 
 "" Preview Markdown File
 map <Leader>m :MarkedOpen<CR><ESC>
 
 nnoremap <S-f> :Ag!
 
+""Disard File Changes
+map <Leader>d :Git checkout -- %<CR><ESC>
 
-"" Always force save
-"" :command W :w!
+""Navigate to URL under cursor
+map gl :call OpenURI()<CR><ESC>
 
+""Always save when hitting Escape
+""map <Esc> :w<CR>
 
+" Fuzzy finder: ignore stuff that can't be opened, and generated files
+let g:fuzzy_ignore = "*.png;*.PNG;*.JPG;*.jpg;*.GIF;*.gif;vendor/**;coverage/**;tmp/**;rdoc/**"
+
+"" =============================
+"" Markdown
+"" =============================
+map <c-\> :!greadme expand('%:p')
 
 "" =============================
 "" File Exclusions
@@ -137,6 +153,10 @@ set noswapfile
 "" =============================
 set mouse=nv
 
+"" =============================
+"" Relative Line Numbers
+"" =============================
+setglobal relativenumber
 
 "" ============================
 "" Code Folding
@@ -239,6 +259,16 @@ endfunction
 
 function! ChangeDirectory(directory)
   exec "cd " . a:directory
+endfunction
+
+function! OpenURI()
+  let s:uri = matchstr(getline("."), '[a-z]*:\/\/[^ >,;:]*')
+  echo s:uri
+  if s:uri != ""
+	  exec "!open \"" . s:uri . "\""
+  else
+	  echo "No URI found in line."
+  endif
 endfunction
 
 "" ============================

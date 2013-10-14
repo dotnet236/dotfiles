@@ -50,8 +50,56 @@ alias reload="source ~/.bash_profile"
 alias todo="vim ~/Notes/todo"
 alias note="vim ~/Notes/current_notes"
 alias b="popd"
-alias hh="cd ~/Projects/humboldts_happiness"
+alias step="cd ~/Projects/step-io"
 alias projects="cd ~/Projects"
+alias pgs="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
+alias pg="psql -d postgres"
+
+alias stash="git stash"
+alias glcm="git log -1 --pretty=%B"
+
+# git diff..
+alias gd='git diff'
+alias gdc='git diff --cached'
+
+# git status..
+alias gs='git status --short'
+
+# git fetch..
+alias gf='git fetch'
+alias gfo='git fetch origin'
+alias gfa='git fetch --all'
+
+#
+alias glog='git log --date-order --pretty="format:%C(yellow)%h%Cblue%d%Creset %s %C(white) %an, %ar%Creset"'
+alias gl='glog --graph'
+
+# git merge
+alias gm='git merge --no-ff --log'
+
+# git mv
+alias gmv='git mv'
+
+# git rm
+alias grm='git rm'
+
+# git reset..
+alias grod='git reset --hard origin/development'
+alias grom='git reset --hard origin/master'
+alias groi='git reset --hard origin/integration'
+alias gror='git reset --hard origin/release'
+
+# git checkout..
+alias gcod='git checkout development'
+alias gcoi='git checkout integration'
+alias gcom='git checkout master'
+alias gcor='git checkout release'
+
+# git diff..
+alias gdoi='git diff origin/integration'
+alias gdod='git diff origin/development'
+alias gdom='git diff origin/master'
+
 export PATH="$PATH:/usr/local/share/npm/bin"
 
 
@@ -74,3 +122,6 @@ imv() {
 
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
+
+# added by travis gem
+source /Users/acapone/.travis/travis.sh

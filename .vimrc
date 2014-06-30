@@ -33,11 +33,15 @@ call vundle#rc()
 filetype plugin indent on
 
 "" Vundle Bundles
+
+Bundle 'gitignore'
+Bundle 'vim-expand-region'
 Bundle 'gmarik/vundle'
 Bundle 'tpope/vim-rails.git'
 Bundle 'tpope/vim-git.git'
 Bundle 'tpope/vim-rake.git'
 Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-commentary'
 Bundle 'altercation/vim-colors-solarized.git'
 Bundle 'othree/html5.vim.git'
 Bundle 'kchmck/vim-coffee-script.git'
@@ -46,13 +50,16 @@ Bundle 'scrooloose/nerdtree'
 Bundle 'godlygeek/tabular.git'
 Bundle 'git://git.wincent.com/command-t.git'
 Bundle 'camelcasemotion'
-Bundle 'https://github.com/itspriddle/vim-marked.git'
 Bundle 'https://github.com/airblade/vim-gitgutter.git'
 Bundle 'https://github.com/epmatsw/ag.vim.git'
 Bundle 'https://github.com/jceb/vim-orgmode.git'
 Bundle 'christoomey/vim-tmux-navigator'
-Bundle 'YouCompleteMe'
-
+Bundle 'https://github.com/tpope/vim-markdown.git'
+Bundle 'rking/ag.vim'
+Bundle 'https://github.com/suan/vim-instant-markdown'
+Bundle 'https://github.com/jeffkreeftmeijer/vim-numbertoggle'
+Bundle 'skalnik/vim-vroom'
+Bundle 'benmills/vimux'
 
 "" =============================
 "" Key Remaps
@@ -72,9 +79,7 @@ vmap <c-y> :w !pbcopy<CR><CR>
 map <c-o> :call RunCurrentTest()<CR>
 map <c-i> :call RunCurrentLineInTest()<CR>
 
-"" Navigate Buffers
-map <c-h> :bn<CR>
-map <c-l> :bp<CR>
+""RunCurrentLineInTest()<CR>
 
 "" Edit 'general' scratch pad
 map <c-n> :e ~/Notes/current_notes<CR><ESC>
@@ -87,11 +92,14 @@ nmap <c-b> :call ZoomWin()<CR><ESC>
 map <c-m> :e ~/.vimrc<CR>:115<CR><ESC>
 
 "" Toggle To/From Test
-nmap <c-a> :call ToggleBetweenTest()<CR>
+nmap <c-a> :call ToggleBetweenTest() <CR><ESC>
 
 "" Git
 nmap <Leader>o :only!<CR>:diffoff<CR>
 nmap <Leader>g :Gstatus<CR>
+
+"" Relative Line Number Toggling
+let g:NumberToggleTrigger="<Leader>-"
 
 " JSON Formatter
 map <Leader>jf :!python -m json.tool<CR>
@@ -117,12 +125,21 @@ nmap <Leader>d :NERDTree<CR><ESC>
   - "app/assets/javascripts/test.js.coffee"
 
 "" Preview Markdown File
-map <Leader>m :MarkedOpen<CR><ESC>
+"" map <Leader>m :MarkedOpen<CR><ESC>
 
 nnoremap <S-f> :Ag!
 
 ""Disard File Changes
 map <Leader>d :Git checkout -- %<CR><ESC>
+
+""Redraw...yep this is a hack
+""TODO: Figure out why redrawing is sometimes necessary
+map <Leader>r :!resize<CR><ESC>
+
+"" Region Expanding
+"" Credit to http://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
+vmap v <Plug>(expand_region_expand)
+vmap <C-v> <Plug>(expand_region_shrink)
 
 ""Navigate to URL under cursor
 map gl :call OpenURI()<CR><ESC>
@@ -132,6 +149,10 @@ map gl :call OpenURI()<CR><ESC>
 
 " Fuzzy finder: ignore stuff that can't be opened, and generated files
 let g:fuzzy_ignore = "*.png;*.PNG;*.JPG;*.jpg;*.GIF;*.gif;vendor/**;coverage/**;tmp/**;rdoc/**"
+set wildignore+=*/public,*/node_modules,*/bower_components,*/tmp/*,*.so,*.swp,*.zip
+
+"" Do not clear buffer after pasting
+vmap <silent> <expr> p <sid>Repl()
 
 "" =============================
 "" Markdown
@@ -156,7 +177,8 @@ set mouse=nv
 "" =============================
 "" Relative Line Numbers
 "" =============================
-setglobal relativenumber
+"" setglobal relativenumber
+""set rnu
 
 "" ============================
 "" Code Folding
@@ -165,6 +187,21 @@ set foldmethod=indent   "fold based on indent
 set foldnestmax=10      "deepest fold is 10 levels
 set nofoldenable        "dont fold by default
 set foldlevel=1         "this is just what i use
+
+"" ============================
+"" Cache files in CTRLP using git ls-files
+"" ============================
+set foldmethod=indent   "fold based on indent
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
+let g:ctrlp_use_caching = 0
+
+"" ============================
+"" Configuration for vroommmmmmmmm
+"" ============================
+let g:vroom_write_all = 1
+let g:vroom_use_vimux = 1
+let g:vroom_use_spring = 1
+let g:vroom_detect_spec_helper = 1
 
 
 "" ============================
@@ -198,25 +235,33 @@ set autochdir
 
 
 "" ============================
+"" Sounds
+"" ============================
+""Disable beeping
+set vb
+
+
+
+"" ============================
 "" File Transitions
 "" ============================
 "" Functional Test <-> Controller - Props to J. Weirich for the idea
 function! ToggleBetweenTest()
   let in_test_file = match(expand("%"), '\(_spec.rb\)$') != -1
   if in_test_file
-    let tmp_path = substitute(expand('%:p'), 'spec/requests', 'app/controllers', '')
-    let controller_path = substitute(tmp_path, 'resource_spec.rb', 'controller.rb', '')
+    let tmp_path = substitute(expand('%:p'), 'spec/controllers', 'app/controllers', '')
+    let controller_path = substitute(tmp_path, '_spec.rb', '.rb', '')
     execute ":e " . controller_path
   else
-    let tmp_path = substitute(expand('%:p'), 'app/controllers', 'spec/requests', '')
-    let spec_path = substitute(tmp_path, 'controller.rb', 'resource_spec.rb', '')
+    let tmp_path = substitute(expand('%:p'), 'app/controllers', 'spec/controllers', '')
+    let spec_path = substitute(tmp_path, '.rb', '_spec.rb', '')
     execute ":e " . spec_path
   endif
 endfunction
 
 
 "" ============================
-"" Rspec w/zeus - Thanks B. Orenstein
+"" Rspec w/spring - Thanks B. Orenstein
 "" ============================
 function! RunCurrentTest()
   let g:spec_directory = expand('%:p:h')
@@ -225,7 +270,7 @@ function! RunCurrentTest()
   if g:in_test_file
     call SetTestFile()
     call ChangeDirectory(b:rails_root)
-    call SetTestRunner("!zeus rspec doc")
+    call SetTestRunner("!spring rspec --format doc ")
     exec g:bjo_test_runner g:bjo_test_file
     call ChangeDirectory(g:spec_directory)
   endif
@@ -241,7 +286,7 @@ function! RunCurrentLineInTest()
   if g:in_test_file
     call SetTestFileWithLine()
     call ChangeDirectory(b:rails_root)
-    let g:cmd = "!zeus rspec " . g:bjo_test_file . ":" . g:bjo_test_file_line
+    let g:cmd = "!FULL=1 spring rspec --format doc " . g:bjo_test_file . ":" . g:bjo_test_file_line
     echo g:cmd
     exec g:cmd
     call ChangeDirectory(g:spec_directory)
@@ -272,7 +317,25 @@ function! OpenURI()
 endfunction
 
 "" ============================
+"" Markdown Preview
+"" ============================
+filetype plugin on
+
+"" ============================
 "" .vimrc
 "" ============================
 "" Reload .vimrc when saved
 "" autocmd  BufWritePost .vimrc source %
+
+""
+"" ============================
+"" Restore Paste Buffer
+"" ============================
+function! RestoreRegister()
+  let @" = s:restore_reg
+  return ''
+endfunction
+function! s:Repl()
+  let s:restore_reg = @"
+  return "p@=RestoreRegister()\<cr>"
+endfunction

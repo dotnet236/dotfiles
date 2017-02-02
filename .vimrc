@@ -1,77 +1,67 @@
 "" =============================
-"" Janus
-"" =============================
-let g:janus_path = escape(fnamemodify(resolve(expand("<sfile>:p")), ":h"), ' ')
-let g:janus_vim_path = escape(fnamemodify(resolve(expand("<sfile>:p" . "vim")), ":h"), ' ')
-let g:janus_custom_path = expand("~/.janus")
-
-exe 'source ' . g:janus_vim_path . '/core/before/plugin/janus.vim'
-
-call janus#add_group("tools")
-call janus#add_group("langs")
-call janus#add_group("colors")
-
-if filereadable(expand("~/.vimrc.before"))
-  source ~/.vimrc.before
-endif
-
-exe 'source ' . g:janus_vim_path . '/core/plugins.vim'
-
-" Pathogen
-call janus#load_pathogen()
-
-
-"" =============================
 "" Vundle
 "" =============================
 set nocompatible
 filetype off
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
 filetype plugin indent on
 
 "" Vundle Bundles
 
-Bundle 'gitignore'
-Bundle 'vim-expand-region'
-Bundle 'gmarik/vundle'
-Bundle 'tpope/vim-rails.git'
-Bundle 'tpope/vim-git.git'
-Bundle 'tpope/vim-rake.git'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-commentary'
-Bundle 'altercation/vim-colors-solarized.git'
-Bundle 'othree/html5.vim.git'
-Bundle 'kchmck/vim-coffee-script.git'
-Bundle 'tComment'
-Bundle 'scrooloose/nerdtree'
-Bundle 'godlygeek/tabular.git'
-Bundle 'git://git.wincent.com/command-t.git'
-Bundle 'camelcasemotion'
-Bundle 'https://github.com/airblade/vim-gitgutter.git'
-Bundle 'https://github.com/epmatsw/ag.vim.git'
-Bundle 'https://github.com/jceb/vim-orgmode.git'
-Bundle 'christoomey/vim-tmux-navigator'
-Bundle 'https://github.com/tpope/vim-markdown.git'
-Bundle 'rking/ag.vim'
-Bundle 'https://github.com/suan/vim-instant-markdown'
-Bundle 'https://github.com/jeffkreeftmeijer/vim-numbertoggle'
-Bundle 'skalnik/vim-vroom'
-Bundle 'benmills/vimux'
+Plugin 'VundleVim/Vundle.vim'
+
+Plugin 'gitignore'
+Plugin 'vim-expand-region'
+Plugin 'gmarik/vundle'
+Plugin 'tpope/vim-rails.git'
+Plugin 'tpope/vim-git.git'
+Plugin 'tpope/vim-rake.git'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-commentary'
+Plugin 'altercation/vim-colors-solarized.git'
+Plugin 'othree/html5.vim.git'
+Plugin 'kchmck/vim-coffee-script.git'
+Plugin 'tComment'
+Plugin 'scrooloose/nerdtree'
+Plugin 'godlygeek/tabular.git'
+Plugin 'https://github.com/airblade/vim-gitgutter.git'
+Plugin 'https://github.com/jceb/vim-orgmode.git'
+Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'https://github.com/tpope/vim-markdown.git'
+Plugin 'rking/ag.vim'
+Plugin 'https://github.com/suan/vim-instant-markdown'
+Plugin 'https://github.com/jeffkreeftmeijer/vim-numbertoggle'
+Plugin 'skalnik/vim-vroom'
+Plugin 'benmills/vimux'
+Plugin 'bkad/camelcasemotion'
+Plugin 'wincent/Command-T'
+Plugin 'bling/vim-airline'
+
+call vundle#end()  
+filetype plugin indent on
+
+"" =============================
+"" Colors
+"" =============================
+syntax enable
+set background=dark
 
 "" =============================
 "" Key Remaps
 "" =============================
+
+nnoremap <silent> <c-p> <Plug>(CommandT)
 
 " Pane Movement
 map <c-w>u <c-w>t<c-w>K
 map <c-w>d <c-w>t<c-w>H
 
 "" Copy/Paste
-nmap <c-p> :set paste<CR>:r !pbpaste<CR>:set nopaste<CR><Esc>
-imap <c-p> <Esc>:set paste<CR>:r !pbpaste<CR>:set nopaste<CR><Esc>
+"" nmap <c-p> :set paste<CR>:r !pbpaste<CR>:set nopaste<CR><Esc>
+"" imap <c-p> <Esc>:set paste<CR>:r !pbpaste<CR>:set nopaste<CR><Esc>
 nmap <c-y> :.w !pbcopy<CR><CR>
 vmap <c-y> :w !pbcopy<CR><CR>
 
@@ -110,14 +100,6 @@ map <Leader>jf :!python -m json.tool<CR>
 
 "" Spell Checking
 nmap <silent> s :set spell!<CR>
-
-"" Move Between Words Using Camel Case
-map w <Plug>CamelCaseMotion_w
-map b <Plug>CamelCaseMotion_b
-map e <Plug>CamelCaseMotion_e
-sunmap w
-sunmap b
-sunmap e
 
 "" Nerd Tree
 nmap <Leader>d :NERDTree<CR><ESC>
@@ -173,12 +155,6 @@ set noswapfile
 "" Mouse Features
 "" =============================
 set mouse=nv
-
-"" =============================
-"" Relative Line Numbers
-"" =============================
-"" setglobal relativenumber
-""set rnu
 
 "" ============================
 "" Code Folding
@@ -339,3 +315,10 @@ function! s:Repl()
   let s:restore_reg = @"
   return "p@=RestoreRegister()\<cr>"
 endfunction
+
+"" =============================
+"" Relative Line Numbers
+"" =============================
+set relativenumber
+
+set tabstop=2

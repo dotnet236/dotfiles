@@ -5,7 +5,7 @@ ZSH=$HOME/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-export ZSH_THEME="prose"
+export ZSH_THEME="candy"
 
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
@@ -31,22 +31,12 @@ unsetopt correct_all
 
 
 # Customize to your needs...
-export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/Users/acapone/.rvm/bin
+export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/Users/anthonycapone/.rvm/bin:/Users/anthonycapone/.meteor
 
 set EDITOR=vi
 export SERVICES_ENV=local
 
-#export DOTBASH=~/.git_bash
-#source ~/.git-completion.bash
-#source $DOTBASH/main.sh
-#export PS1="\u@\h \w\[$txtcyn\]\$git_branch\[$txtrst\]\$ "
-alias ap="cd ~/Projects/Galileo/auth-platform/auth-platform-webapp"
-alias dp="cd ~/Projects/Galileo/auth-devportal/auth-devportal-webapp"
-alias ae="cd ~/Projects/Galileo/auth-editors"
-alias simplecard="cd ~/Projects/Galileo/simplecard/simplecard-webapp"
-alias gto="cd ~/Projects/Galileo/galileo-test-objects"
-alias sdk="cd ~/Projects/Galileo/galileo-sdk"
-alias reload="source ~/.bash_profile"
+alias reload="source ~/.zshrc"
 alias todo="vim ~/Notes/todo"
 alias note="vim ~/Notes/current_notes"
 alias b="popd"
@@ -54,6 +44,7 @@ alias step="cd ~/Projects/step-io"
 alias projects="cd ~/Projects"
 alias pgs="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
 alias pg="psql -d postgres"
+alias fb="cd ~/projects/fundbase"
 
 alias stash="git stash"
 alias glcm="git log -1 --pretty=%B"
@@ -101,7 +92,7 @@ alias gdod='git diff origin/development'
 alias gdom='git diff origin/master'
 
 export PATH="$PATH:/usr/local/share/npm/bin"
-
+export OPENEXCHANGERATES_API_KEY="4d46391983ba492299e555fd57f2229f"
 
 foreground-vi() {
   fg %vi
@@ -120,8 +111,20 @@ imv() {
   done
 }
 
+transfer() {
+    # write to output to tmpfile because of progress bar
+    tmpfile=$( mktemp -t transferXXX )
+    curl --progress-bar --upload-file $1 https://transfer.sh/$(basename $1) >> $tmpfile;
+    head -2 $tmpfile | pbcopy
+    cat $tmpfile;
+    echo "URL Copied To Clipboard"
+    rm -f $tmpfile;
+}
+
+alias transfer=transfer
+
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
+export R_HOME="/Library/Frameworks/R.framework/Resources"
 
-# added by travis gem
-source /Users/acapone/.travis/travis.sh
+export SLACK_API_TOKEN='xoxp-14090043810-130658332128-132371715073-67ea2619af4a18c8c4f7fc707851c725'

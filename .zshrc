@@ -126,5 +126,3 @@ alias transfer=transfer
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
 export R_HOME="/Library/Frameworks/R.framework/Resources"
-
-export SLACK_API_TOKEN='xoxp-14090043810-130658332128-132371715073-67ea2619af4a18c8c4f7fc707851c725'
